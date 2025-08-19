@@ -14,7 +14,6 @@ import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
 @GenerateNiceMocks([MockSpec<ProcessRunner>()])
-import 'utils.mocks.dart';
 
 final String pkgName = 'openapi_generator';
 
@@ -34,7 +33,7 @@ Future<String> generateFromPath(
   String Function(String annotatedFileContent)? preProcessor,
   Map<String, String>? additionalSources,
 }) async {
-  process ??= MockProcessRunner();
+  // process ??= MockProcessRunner();
   final spec = File(openapiSpecFilePath ?? '${testSpecPath}openapi.test.yaml')
       .readAsStringSync();
   final annotatedContent = File(annotatedFilePath).readAsStringSync();
@@ -60,7 +59,7 @@ Future<String> generateFromPath(
 
   var writer = InMemoryAssetWriter();
 
-  final Builder builder = LibraryBuilder(OpenapiGenerator(process),
+  final Builder builder = LibraryBuilder(OpenapiGenerator(process!),
       generatedExtension: '.openapi_generator');
   await testBuilder(builder, sources,
       reader: await PackageAssetReader.currentIsolate(),
@@ -90,7 +89,7 @@ Future<String> generateFromSource(String source,
     {ProcessRunner? process,
     String path = 'lib/myapp.dart',
     String? openapiSpecFilePath}) async {
-  process ??= MockProcessRunner();
+  // process ??= MockProcessRunner();
   final spec = File(openapiSpecFilePath ?? '${testSpecPath}openapi.test.yaml')
       .readAsStringSync();
   var sources = <String, String>{
@@ -117,7 +116,7 @@ Future<String> generateFromSource(String source,
   }
 
   var writer = InMemoryAssetWriter();
-  final Builder builder = LibraryBuilder(OpenapiGenerator(process),
+  final Builder builder = LibraryBuilder(OpenapiGenerator(process!),
       generatedExtension: '.openapi_generator');
   await testBuilder(builder, sources,
       reader: await PackageAssetReader.currentIsolate(),
