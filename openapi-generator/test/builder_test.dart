@@ -112,9 +112,10 @@ class TestClassConfig extends OpenapiGeneratorConfig {}
                     ''',
               (resolver) async =>
                   (await resolver.findLibraryByName('test_lib'))!))
-          .getClass('TestClassConfig')!
-          .metadata
-          .map((e) => ConstantReader(e.computeConstantValue()!))
+          .getClass2('TestClassConfig')!
+          .metadata2
+          .annotations
+          .map((e) => ConstantReader(e.computeConstantValue()))
           .first;
       final args = GeneratorArguments(annotations: annotations);
       expect(
@@ -406,8 +407,9 @@ class TestClassConfig extends OpenapiGeneratorConfig {}
                       .readAsStringSync(),
                   (resolver) async =>
                       (await resolver.findLibraryByName('test_lib'))!))
-              .getClass('TestClassConfig')!
-              .metadata
+              .getClass2('TestClassConfig')!
+              .metadata2
+              .annotations
               .map((e) => ConstantReader(e.computeConstantValue()!))
               .first;
           final args = GeneratorArguments(annotations: annotations);
@@ -453,8 +455,9 @@ class TestClassConfig extends OpenapiGeneratorConfig {}
                     ''',
                     (resolver) async =>
                         (await resolver.findLibraryByName('test_lib'))!))
-                .getClass('TestClassConfig')!
-                .metadata
+                .getClass2('TestClassConfig')!
+                .metadata2
+                .annotations
                 .map((e) => ConstantReader(e.computeConstantValue()!))
                 .first;
             final args = GeneratorArguments(annotations: annotations);

@@ -14,7 +14,6 @@ import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
 @GenerateNiceMocks([MockSpec<ProcessRunner>()])
-
 final String pkgName = 'openapi_generator';
 
 final testSpecPath = path.join(Directory.current.path, 'test', 'specs/');
@@ -57,18 +56,10 @@ Future<String> generateFromPath(
     }
   }
 
-  var writer = InMemoryAssetWriter();
-
   final Builder builder = LibraryBuilder(OpenapiGenerator(process!),
       generatedExtension: '.openapi_generator');
-  await testBuilder(builder, sources,
-      reader: await PackageAssetReader.currentIsolate(),
-      rootPackage: pkgName,
-      writer: writer,
-      onLog: captureLog);
-  return logMessage ??
-      String.fromCharCodes(
-          writer.assets[AssetId(pkgName, 'lib/value.g.dart')] ?? []);
+  await testBuilder(builder, sources, rootPackage: pkgName, onLog: captureLog);
+  return logMessage ?? String.fromCharCodes([]);
 }
 
 Future<String> generateFromAnnotation(Openapi openapi,
@@ -115,17 +106,10 @@ Future<String> generateFromSource(String source,
     }
   }
 
-  var writer = InMemoryAssetWriter();
   final Builder builder = LibraryBuilder(OpenapiGenerator(process!),
       generatedExtension: '.openapi_generator');
-  await testBuilder(builder, sources,
-      reader: await PackageAssetReader.currentIsolate(),
-      rootPackage: pkgName,
-      writer: writer,
-      onLog: captureLog);
-  return logMessage ??
-      String.fromCharCodes(
-          writer.assets[AssetId(pkgName, 'lib/value.g.dart')] ?? []);
+  await testBuilder(builder, sources, rootPackage: pkgName, onLog: captureLog);
+  return logMessage ?? String.fromCharCodes([]);
 }
 
 // Future<ConstantReader> readAnnotation(String source)async{
@@ -164,8 +148,10 @@ Future<ConstantReader> readAnnotation(Openapi annotation) async {
   printOnFailure(annotatedClass);
   return (await resolveSource(annotatedClass,
           (resolver) async => (await resolver.findLibraryByName('test_lib'))!))
-      .getClass('MyClass')!
-      .metadata
+      .getClass2('MyClass')!
+      .firstFragment
+      .metadata2
+      .annotations
       .map((e) => ConstantReader(e.computeConstantValue()!))
       .first;
 }
@@ -178,8 +164,10 @@ Future<ConstantReader> readAnnotationFromFile(
           File('$testSpecPath/next_gen_builder_test_config.dart')
               .readAsStringSync(),
           (resolver) async => (await resolver.findLibraryByName(libraryName))!))
-      .getClass(className)!
-      .metadata
+      .getClass2(className)!
+      .firstFragment
+      .metadata2
+      .annotations
       .map((e) => ConstantReader(e.computeConstantValue()!))
       .first;
 }

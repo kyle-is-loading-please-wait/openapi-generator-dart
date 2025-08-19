@@ -8,13 +8,9 @@ environment:
 
 dependencies:
   build: '>=2.0.0 <=4.0.0'
-  source_gen: '>=1.0.0 <=3.1.1'
+  source_gen: '>=3.0.0 <=3.1.1'
   path: '>=1.0.0 <=2.0.0'
-  openapi_generator_annotations:
-    git:
-      ref: test
-      url: https://github.com/kyle-is-loading-please-wait/openapi-generator-dart/
-      path: openapi-generator_annotations
+  openapi_generator_annotations: ^6.1.0
   analyzer: '>=7.5.1 <8.0.0'
   openapi_generator_cli: ^6.1.0
   crypto: '>=3.0.6 <=4.0.0'
@@ -26,8 +22,8 @@ dependencies:
 dev_dependencies:
   test: ^1.24.2
   mockito: ^5.4.4
-  build_test: '>=1.2.0 <3.1.1'
-  source_gen_test:
+  build_test: '>=3.3.0'
+  source_gen_test: ^1.3.1
   test_process:
   pedantic:
   build_runner:

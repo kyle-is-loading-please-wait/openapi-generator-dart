@@ -147,8 +147,10 @@ void main() {
                 config,
                 (resolver) async =>
                     (await resolver.findLibraryByName('test_lib'))!))
-            .getClass('TestClassConfig')!
-            .metadata
+            .getClass2('TestClassConfig')!
+            .firstFragment
+            .metadata2
+            .annotations
             .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
             .first;
         final args = GeneratorArguments(annotations: annotations);
@@ -198,8 +200,10 @@ void main() {
                 config,
                 (resolver) async =>
                     (await resolver.findLibraryByName('test_lib'))!))
-            .getClass('DioPropertiesTestConfig')!
-            .metadata
+            .getClass2('DioPropertiesTestConfig')!
+            .firstFragment
+            .metadata2
+            .annotations
             .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
             .first;
         final args = GeneratorArguments(annotations: annotations);
@@ -256,8 +260,10 @@ void main() {
                 config,
                 (resolver) async =>
                     (await resolver.findLibraryByName('test_lib'))!))
-            .getClass('DioAltPropertiesTestConfig')!
-            .metadata
+            .getClass2('DioAltPropertiesTestConfig')!
+            .firstFragment
+            .metadata2
+            .annotations
             .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
             .first;
         final args = GeneratorArguments(annotations: annotations);
@@ -320,8 +326,10 @@ void main() {
                 config,
                 (resolver) async =>
                     (await resolver.findLibraryByName('test_lib'))!))
-            .getClass('DioAltPropertiesTestConfig')!
-            .metadata
+            .getClass2('DioAltPropertiesTestConfig')!
+            .firstFragment
+            .metadata2
+            .annotations
             .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
             .first;
         final args = GeneratorArguments(annotations: annotations);
