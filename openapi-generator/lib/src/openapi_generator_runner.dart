@@ -25,7 +25,7 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
 
   @override
   FutureOr<String> generateForAnnotatedElement(
-      Element2 element, ConstantReader annotations, BuildStep buildStep) async {
+      Element2 element2, ConstantReader annotations, BuildStep buildStep) async {
     logOutputMessage(
       log: log,
       communication: OutputMessage(
@@ -39,8 +39,8 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
     );
 
     try {
-      if (element is! ClassElement2) {
-        final friendlyName = element.displayName;
+      if (element2 is! ClassElement2) {
+        final friendlyName = element2.displayName;
 
         throw InvalidGenerationSourceError(
           'Generator cannot target `$friendlyName`.',
