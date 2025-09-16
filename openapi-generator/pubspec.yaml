@@ -7,6 +7,9 @@ publish_to: none
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
+dependency_overrides:
+  dart_style: 3.1.2
+
 dependencies:
   build: '>=2.0.0 <=4.0.0'
   source_gen: '>=3.0.0 <=5.0.0'
