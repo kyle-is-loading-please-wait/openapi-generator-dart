@@ -12,7 +12,7 @@ dependencies:
   source_gen: '>=3.0.0 <=5.0.0'
   path: '>=1.0.0 <=2.0.0'
   openapi_generator_annotations:
-  analyzer: '>=7.5.1 <9.0.0'
+  analyzer: '>=8.0.0 <9.0.0'
   openapi_generator_cli: ^6.1.0
   crypto: '>=3.0.6 <=4.0.0'
   meta: '>=1.15.0 <=2.0.0'
