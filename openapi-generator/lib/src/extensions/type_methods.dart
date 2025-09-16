@@ -61,7 +61,7 @@ extension TypeMethods on ConstantReader {
           'Could not read constant via enumValue<$T>(). $T is not a Dart enum.');
     }
 
-    if (!instanceOf(TypeChecker.fromRuntime(T))) {
+    if (!instanceOf(TypeChecker.typeNamed(T))) {
       throw Exception('Not an instance of $T.');
     }
 
@@ -182,4 +182,4 @@ extension ReadProperty on ConstantReader {
 }
 
 bool isA(ConstantReader? v, Type t) =>
-    v?.instanceOf(TypeChecker.fromRuntime(t)) ?? false;
+    v?.instanceOf(TypeChecker.typeNamed(t)) ?? false;
