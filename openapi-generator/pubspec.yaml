@@ -16,6 +16,10 @@ dependencies:
   source_gen: '>=3.0.0 <=5.0.0'
   path: '>=1.0.0 <=2.0.0'
   openapi_generator_annotations:
+    git:
+      ref: test
+      url: https://github.com/kyle-is-loading-please-wait/openapi-generator-dart/
+      path: openapi-generator-annotations
   analyzer: ^8.1.1
   openapi_generator_cli:
     git:
