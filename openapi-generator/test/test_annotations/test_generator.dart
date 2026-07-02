@@ -12,7 +12,7 @@ class TestGenerator extends src_gen.GeneratorForAnnotation<Openapi> {
   const TestGenerator({this.requireTestClassPrefix = true});
 
   @override
-  Iterable<String> generateForAnnotatedElement(Element2 element,
+  Iterable<String> generateForAnnotatedElement(Element element,
       src_gen.ConstantReader annotation, BuildStep buildStep) sync* {
     assert(!annotation.isNull, "The source generator shouldn't be null");
 
