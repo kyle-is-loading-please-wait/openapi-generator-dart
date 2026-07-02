@@ -59,7 +59,14 @@ extension TypeMethods on ConstantReader {
       throw Exception(
           'Could not read constant via enumValue<$T>(). $T is not a Dart enum.');
     }
-
+    // if (!instanceOf(TypeChecker.typeNamed(T))) {
+    //   throw Exception('Not an instance of $T.');
+    // }
+    //
+    // // Access enum field 'values'.
+    // final values = classMirror.getField(const Symbol('values')).reflectee;
+    // // Get enum field 'index'.
+    // final enumIndex = objectValue.getField('index')!.toIntValue();
     try {
       // Access enum field 'values'.
       final values = classMirror.getField(const Symbol('values')).reflectee;

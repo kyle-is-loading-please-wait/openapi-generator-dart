@@ -15,7 +15,7 @@ import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
 @GenerateNiceMocks([MockSpec<ProcessRunner>()])
-import 'utils.mocks.dart';
+// import 'utils.mocks.dart';
 
 final String pkgName = 'openapi_generator';
 
@@ -35,6 +35,7 @@ Future<String> generateFromPath(
   String Function(String annotatedFileContent)? preProcessor,
   Map<String, String>? additionalSources,
 }) async {
+  // process ??= MockProcessRunner();
   process ??= MockProcessRunner();
   final spec = File(openapiSpecFilePath ?? '${testSpecPath}openapi.test.yaml')
       .readAsStringSync();
@@ -73,7 +74,11 @@ Future<String> generateFromPath(
     onLog: captureLog,
     readerWriter: readerWriter,
   );
-
+//   final Builder builder = LibraryBuilder(OpenapiGenerator(process!),
+//       generatedExtension: '.openapi_generator');
+//   await testBuilder(builder, sources, rootPackage: pkgName, onLog: captureLog);
+//   return logMessage ?? String.fromCharCodes([]);
+// }
   printOnFailure('Generated files: $logMessage');
   // Fallback to empty
   final output = logMessage ?? '';
@@ -99,6 +104,7 @@ Future<String> generateFromSource(String source,
     {ProcessRunner? process,
     String path = 'lib/myapp.dart',
     String? openapiSpecFilePath}) async {
+  // process ??= MockProcessRunner();
   process ??= MockProcessRunner();
   final spec = File(openapiSpecFilePath ?? '${testSpecPath}openapi.test.yaml')
       .readAsStringSync();
@@ -127,7 +133,11 @@ Future<String> generateFromSource(String source,
 
   final readerWriter = TestReaderWriter(rootPackage: 'openapi_generator');
   await readerWriter.testing.loadIsolateSources();
-
+//   final Builder builder = LibraryBuilder(OpenapiGenerator(process!),
+//       generatedExtension: '.openapi_generator');
+//   await testBuilder(builder, sources, rootPackage: pkgName, onLog: captureLog);
+//   return logMessage ?? String.fromCharCodes([]);
+// }
   final Builder builder = LibraryBuilder(OpenapiGenerator(process),
       generatedExtension: '.openapi_generator');
   // Run the builder in test mode; it returns a TestBuilderResult
@@ -190,7 +200,31 @@ Future<ConstantReader> readAnnotation(Openapi annotation) async {
       libraryName: 'test_lib',
       className: 'MyClass');
 }
-
+// return (await resolveSource(annotatedClass,
+// (resolver) async => (await resolver.findLibraryByName('test_lib'))!))
+//     .getClass2('MyClass')!
+//     .firstFragment
+//     .metadata2
+//     .annotations
+//     .map((e) => ConstantReader(e.computeConstantValue()!))
+//     .first;
+// }
+//
+// Future<ConstantReader> readAnnotationFromFile(
+// {required String path,
+// String libraryName = 'test_lib',
+// String className = 'TestClass'}) async {
+// return (await resolveSource(
+// File('$testSpecPath/next_gen_builder_test_config.dart')
+//     .readAsStringSync(),
+// (resolver) async => (await resolver.findLibraryByName(libraryName))!))
+//     .getClass2(className)!
+//     .firstFragment
+//     .metadata2
+//     .annotations
+//     .map((e) => ConstantReader(e.computeConstantValue()!))
+//     .first;
+// }
 void cleanup(String path) async {
   final directory = Directory(path);
 

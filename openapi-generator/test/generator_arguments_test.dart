@@ -142,6 +142,19 @@ void main() {
     group('annotation specification', () {
       // https://github.com/gibahjoe/openapi-generator-dart/issues/110
       test('Processes annotations correctly', () async {
+        // final config = File(
+        //     '${Directory.current.path}${Platform.pathSeparator}test${Platform.pathSeparator}specs${Platform.pathSeparator}test_config.dart')
+        //     .readAsStringSync();
+        // final annotations = (await resolveSource(
+        //     config,
+        //         (resolver) async =>
+        //     (await resolver.findLibraryByName('test_lib'))!))
+        //     .getClass2('TestClassConfig')!
+        //     .firstFragment
+        //     .metadata2
+        //     .annotations
+        //     .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
+        //     .first;
         var testFile =
             join(Directory.current.path, 'test', 'specs', 'test_config.dart');
         final config = File(testFile).readAsStringSync();
@@ -197,6 +210,16 @@ void main() {
             definition: config,
             libraryName: 'test_lib',
             className: 'DioPropertiesTestConfig');
+        // final annotations = (await resolveSource(
+        //         config,
+        //         (resolver) async =>
+        //             (await resolver.findLibraryByName('test_lib'))!))
+        //     .getClass2('DioPropertiesTestConfig')!
+        //     .firstFragment
+        //     .metadata2
+        //     .annotations
+        //     .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
+        //     .first;
         final args = GeneratorArguments(annotations: annotations);
         expect(args.cachePath, './test/specs/output/cache.json');
         expect(args.outputDirectory, './test/specs/output');
@@ -251,6 +274,16 @@ void main() {
             definition: config,
             libraryName: 'test_lib',
             className: 'DioAltPropertiesTestConfig');
+        // final annotations = (await resolveSource(
+        //         config,
+        //         (resolver) async =>
+        //             (await resolver.findLibraryByName('test_lib'))!))
+        //     .getClass2('DioAltPropertiesTestConfig')!
+        //     .firstFragment
+        //     .metadata2
+        //     .annotations
+        //     .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
+        //     .first;
         final args = GeneratorArguments(annotations: annotations);
         expect(args.cachePath, './test/specs/output/cache.json');
         expect(args.outputDirectory, './test/specs/output');
@@ -310,6 +343,7 @@ void main() {
             file: config,
             libraryName: 'test_lib',
             className: 'DioAltPropertiesTestConfig');
+
         final args = GeneratorArguments(annotations: annotations);
         expect(args.cachePath, './test/specs/output/cache.json');
         expect(args.outputDirectory, './test/specs/output');

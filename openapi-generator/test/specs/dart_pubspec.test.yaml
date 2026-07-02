@@ -9,9 +9,17 @@ dependencies:
   build: '>=0.12.6 <=3.0.0'
   source_gen: '>=1.0.0 <=2.0.0'
   path: '>=1.0.0 <=2.0.0'
-  openapi_generator_annotations: ^4.11.0
-  analyzer: '>=2.0.0 <=6.0.0'
-  openapi_generator_cli: ^4.11.0
+  openapi_generator_annotations: #^4.11.0
+    git:
+      ref: test
+      url: https://github.com/kyle-is-loading-please-wait/openapi-generator-dart/
+      path: openapi-generator_annotations
+  analyzer: ^8.1.1
+  openapi_generator_cli: #^4.11.0
+    git:
+      ref: test
+      url: https://github.com/kyle-is-loading-please-wait/openapi-generator-dart/
+      path: openapi-generator_cli
   yaml: ^3.1.2
 
 dev_dependencies:
