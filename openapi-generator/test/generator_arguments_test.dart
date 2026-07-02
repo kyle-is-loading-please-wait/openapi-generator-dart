@@ -1,11 +1,13 @@
 import 'dart:io';
 
-import 'package:build_test/build_test.dart';
 import 'package:openapi_generator/src/models/generator_arguments.dart';
 import 'package:openapi_generator/src/utils.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
+import 'package:path/path.dart';
 import 'package:source_gen/source_gen.dart' as src_gen;
 import 'package:test/test.dart';
+
+import 'utils.dart';
 
 void main() {
   group('GeneratorArguments', () {
@@ -140,19 +142,27 @@ void main() {
     group('annotation specification', () {
       // https://github.com/gibahjoe/openapi-generator-dart/issues/110
       test('Processes annotations correctly', () async {
-        final config = File(
-                '${Directory.current.path}${Platform.pathSeparator}test${Platform.pathSeparator}specs${Platform.pathSeparator}test_config.dart')
-            .readAsStringSync();
-        final annotations = (await resolveSource(
-                config,
-                (resolver) async =>
-                    (await resolver.findLibraryByName('test_lib'))!))
-            .getClass2('TestClassConfig')!
-            .firstFragment
-            .metadata2
-            .annotations
-            .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
-            .first;
+        // final config = File(
+        //     '${Directory.current.path}${Platform.pathSeparator}test${Platform.pathSeparator}specs${Platform.pathSeparator}test_config.dart')
+        //     .readAsStringSync();
+        // final annotations = (await resolveSource(
+        //     config,
+        //         (resolver) async =>
+        //     (await resolver.findLibraryByName('test_lib'))!))
+        //     .getClass2('TestClassConfig')!
+        //     .firstFragment
+        //     .metadata2
+        //     .annotations
+        //     .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
+        //     .first;
+        var testFile =
+            join(Directory.current.path, 'test', 'specs', 'test_config.dart');
+        final config = File(testFile).readAsStringSync();
+        final annotations = await getConstantReader(
+            definition: config,
+            libraryName: 'test_lib',
+            className: 'TestClassConfig');
+
         final args = GeneratorArguments(annotations: annotations);
         expect(args.cachePath, './test/specs/output/cache.json');
         expect(args.outputDirectory, './test/specs/output');
@@ -196,16 +206,20 @@ void main() {
         final config = File(
                 '${Directory.current.path}${Platform.pathSeparator}test${Platform.pathSeparator}specs${Platform.pathSeparator}dio_properties_test_config.dart')
             .readAsStringSync();
-        final annotations = (await resolveSource(
-                config,
-                (resolver) async =>
-                    (await resolver.findLibraryByName('test_lib'))!))
-            .getClass2('DioPropertiesTestConfig')!
-            .firstFragment
-            .metadata2
-            .annotations
-            .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
-            .first;
+        final annotations = await getConstantReader(
+            definition: config,
+            libraryName: 'test_lib',
+            className: 'DioPropertiesTestConfig');
+        // final annotations = (await resolveSource(
+        //         config,
+        //         (resolver) async =>
+        //             (await resolver.findLibraryByName('test_lib'))!))
+        //     .getClass2('DioPropertiesTestConfig')!
+        //     .firstFragment
+        //     .metadata2
+        //     .annotations
+        //     .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
+        //     .first;
         final args = GeneratorArguments(annotations: annotations);
         expect(args.cachePath, './test/specs/output/cache.json');
         expect(args.outputDirectory, './test/specs/output');
@@ -256,16 +270,20 @@ void main() {
         final config = File(
                 '${Directory.current.path}${Platform.pathSeparator}test${Platform.pathSeparator}specs${Platform.pathSeparator}dio_alt_properties_test_config.dart')
             .readAsStringSync();
-        final annotations = (await resolveSource(
-                config,
-                (resolver) async =>
-                    (await resolver.findLibraryByName('test_lib'))!))
-            .getClass2('DioAltPropertiesTestConfig')!
-            .firstFragment
-            .metadata2
-            .annotations
-            .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
-            .first;
+        final annotations = await getConstantReader(
+            definition: config,
+            libraryName: 'test_lib',
+            className: 'DioAltPropertiesTestConfig');
+        // final annotations = (await resolveSource(
+        //         config,
+        //         (resolver) async =>
+        //             (await resolver.findLibraryByName('test_lib'))!))
+        //     .getClass2('DioAltPropertiesTestConfig')!
+        //     .firstFragment
+        //     .metadata2
+        //     .annotations
+        //     .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
+        //     .first;
         final args = GeneratorArguments(annotations: annotations);
         expect(args.cachePath, './test/specs/output/cache.json');
         expect(args.outputDirectory, './test/specs/output');
@@ -319,19 +337,13 @@ void main() {
       test(
           'Processes annotation with inputSpecFile that contains url correctly',
           () async {
-        final config = File(
-                '${Directory.current.path}${Platform.pathSeparator}test${Platform.pathSeparator}specs${Platform.pathSeparator}input_remote_properties_test_config.dart')
-            .readAsStringSync();
-        final annotations = (await resolveSource(
-                config,
-                (resolver) async =>
-                    (await resolver.findLibraryByName('test_lib'))!))
-            .getClass2('DioAltPropertiesTestConfig')!
-            .firstFragment
-            .metadata2
-            .annotations
-            .map((e) => src_gen.ConstantReader(e.computeConstantValue()!))
-            .first;
+        final config = File(join(Directory.current.path, 'test', 'specs',
+            'input_remote_properties_test_config.dart'));
+        final annotations = await getConstantReaderForPath(
+            file: config,
+            libraryName: 'test_lib',
+            className: 'DioAltPropertiesTestConfig');
+
         final args = GeneratorArguments(annotations: annotations);
         expect(args.cachePath, './test/specs/output/cache.json');
         expect(args.outputDirectory, './test/specs/output');

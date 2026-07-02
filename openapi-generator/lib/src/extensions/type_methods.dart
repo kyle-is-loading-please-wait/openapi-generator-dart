@@ -1,5 +1,4 @@
 import 'dart:mirrors';
-
 import 'package:analyzer/dart/element/type.dart';
 import 'package:openapi_generator/src/utils.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
@@ -60,17 +59,25 @@ extension TypeMethods on ConstantReader {
       throw Exception(
           'Could not read constant via enumValue<$T>(). $T is not a Dart enum.');
     }
+    // if (!instanceOf(TypeChecker.typeNamed(T))) {
+    //   throw Exception('Not an instance of $T.');
+    // }
+    //
+    // // Access enum field 'values'.
+    // final values = classMirror.getField(const Symbol('values')).reflectee;
+    // // Get enum field 'index'.
+    // final enumIndex = objectValue.getField('index')!.toIntValue();
+    try {
+      // Access enum field 'values'.
+      final values = classMirror.getField(const Symbol('values')).reflectee;
+      // Get enum field 'index'.
+      final enumIndex = objectValue.getField('index')!.toIntValue();
 
-    if (!instanceOf(TypeChecker.typeNamed(T))) {
-      throw Exception('Not an instance of $T.');
+      return values[enumIndex];
+    } catch (_, __) {
+      throw Exception(
+          'Could not read constant via enumValue<$T>(). $this is not an instance of $T.');
     }
-
-    // Access enum field 'values'.
-    final values = classMirror.getField(const Symbol('values')).reflectee;
-    // Get enum field 'index'.
-    final enumIndex = objectValue.getField('index')!.toIntValue();
-
-    return values[enumIndex];
   }
 }
 
@@ -174,12 +181,77 @@ extension ReadProperty on ConstantReader {
     } else if (isA(v, List)) {
       return v.listValue.map(convertToPropertyValue).toList() as T;
     } else if (isA(v, Enum)) {
-      return v.enumValue();
+      return v.enumValue<T>();
     } else {
       return null;
     }
   }
 }
 
-bool isA(ConstantReader? v, Type t) =>
-    v?.instanceOf(TypeChecker.typeNamed(t)) ?? false;
+bool isA(ConstantReader? v, Type t) {
+  return v?.instanceOf(TypeChecker.typeNamed(t)) ?? false;
+}
+
+// TypeChecker fromRuntime(Type type) {
+//   final mirror = reflectClass(type);
+//   final uri = normalizeUrl(
+//     (mirror.owner as LibraryMirror).uri,
+//   ).replace(fragment: MirrorSystem.getName(mirror.simpleName));
+//   return _runtimeCache[type] ??= TypeChecker.fromUrl(uri);
+// }
+
+// // Precomputed type checker cache for runtime types.
+// final Map<Type, TypeChecker> _runtimeCache = <Type, TypeChecker>{};
+// class _MirrorTypeChecker extends TypeChecker {
+//   static Uri _uriOf(ClassMirror mirror) => normalizeUrl(
+//     (mirror.owner as LibraryMirror).uri,
+//   ).replace(fragment: MirrorSystem.getName(mirror.simpleName));
+
+//   // Precomputed type checker for types that already have been used.
+//   static final _cache = Expando<TypeChecker>();
+
+//   final Type _type;
+
+//   const _MirrorTypeChecker(this._type) : super._();
+
+//   TypeChecker get _computed =>
+//       _cache[this] ??= TypeChecker.fromUrl(_uriOf(reflectClass(_type)));
+
+//   @override
+//   bool isExactly(Element element) => _computed.isExactly(element);
+
+//   @override
+//   String toString() => _computed.toString();
+// }
+
+// Checks a runtime type name and optional package against a static type.
+// class _NameTypeChecker extends TypeChecker {
+//   final Type _type;
+
+//   final String? _inPackage;
+//   final bool _inSdk;
+
+//   const _NameTypeChecker(this._type, {String? inPackage, bool? inSdk})
+//     : _inPackage = inPackage,
+//       _inSdk = inSdk ?? false,
+//       super._();
+
+//   String get _typeName {
+//     final result = _type.toString();
+//     return result.contains('<')
+//         ? result.substring(0, result.indexOf('<'))
+//         : result;
+//   }
+
+//   @override
+//   bool isExactly(Element element) {
+//     final uri = element.library!.uri;
+//     return element.name == _typeName &&
+//         (_inPackage == null ||
+//             (((uri.scheme == 'dart') == _inSdk) &&
+//                 uri.pathSegments.first == _inPackage));
+//   }
+
+//   @override
+//   String toString() => _inPackage == null ? '$_type' : '$_inPackage#$_type';
+// }

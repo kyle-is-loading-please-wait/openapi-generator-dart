@@ -14,15 +14,18 @@ void main() {
       expect(props.sortModelPropertiesByRequiredFlag, isTrue);
       expect(props.sortParamsByRequiredFlag, isTrue);
       // Default null props
-      [
+      for (var element in [
         props.pubVersion,
+        props.pubPublishTo,
         props.pubName,
         props.pubHomepage,
         props.pubDescription,
         props.pubAuthor,
         props.pubAuthorEmail,
         props.sourceFolder
-      ].forEach((element) => expect(element, isNull));
+      ]) {
+        expect(element, isNull);
+      }
     });
     test('toMap', () {
       final props = AdditionalProperties();
@@ -37,19 +40,23 @@ void main() {
       expect(map['sortParamsByRequiredFlag'], isTrue);
 
       // Doesn't include null fields
-      [
+      for (var element in [
         'pubVersion',
+        'pubPublishTo',
         'pubName',
         'pubHomepage',
         'pubDescription',
         'pubAuthor',
         'pubAuthorEmail',
         'sourceFolder'
-      ].forEach((element) => expect(map.containsKey(element), isFalse));
+      ]) {
+        expect(map.containsKey(element), isFalse);
+      }
     });
     test('fromMap', () {
       final props = AdditionalProperties(
           pubVersion: '1.0.0',
+          pubPublishTo: "https://test.test",
           pubName: 'test',
           pubHomepage: 'test',
           pubDescription: 'test',
@@ -66,6 +73,7 @@ void main() {
         'pubHomepage': props.pubHomepage,
         'pubName': props.pubName,
         'pubVersion': props.pubVersion,
+        'pubPublishTo': props.pubPublishTo,
         'legacyDiscriminatorBehavior': props.legacyDiscriminatorBehavior,
         'sortModelPropertiesByRequiredFlag':
             props.sortModelPropertiesByRequiredFlag,
@@ -86,6 +94,7 @@ void main() {
           props.sortModelPropertiesByRequiredFlag);
       expect(actual.sortParamsByRequiredFlag, props.sortParamsByRequiredFlag);
       expect(actual.pubVersion, props.pubVersion);
+      expect(actual.pubPublishTo, props.pubPublishTo);
       expect(actual.pubName, props.pubName);
       expect(actual.pubHomepage, props.pubHomepage);
       expect(actual.pubDescription, props.pubDescription);
@@ -107,8 +116,9 @@ void main() {
       expect(props.sortModelPropertiesByRequiredFlag, isTrue);
       expect(props.sortParamsByRequiredFlag, isTrue);
       // Default null props
-      [
+      for (var element in [
         props.pubVersion,
+        props.pubPublishTo,
         props.pubName,
         props.pubHomepage,
         props.pubDescription,
@@ -118,7 +128,9 @@ void main() {
         props.nullableFields,
         props.serializationLibrary,
         props.dateLibrary,
-      ].forEach((element) => expect(element, isNull));
+      ]) {
+        expect(element, isNull);
+      }
     });
     test('toMap', () {
       final props = DioProperties();
@@ -133,8 +145,9 @@ void main() {
       expect(map['sortParamsByRequiredFlag'], isTrue);
 
       // Doesn't include null fields
-      [
+      for (var element in [
         'pubVersion',
+        'pubPublishTo',
         'pubName',
         'pubHomepage',
         'pubDescription',
@@ -144,11 +157,14 @@ void main() {
             'dateLibrary',
         'nullableFields',
         'serializationLibrary'
-      ].forEach((element) => expect(map.containsKey(element), isFalse));
+      ]) {
+        expect(map.containsKey(element), isFalse);
+      }
     });
     test('fromMap', () {
       final props = DioProperties(
         pubVersion: '1.0.0',
+        pubPublishTo: 'https://test.test',
         pubName: 'test',
         pubHomepage: 'test',
         pubDescription: 'test',
@@ -169,6 +185,7 @@ void main() {
         'pubHomepage': props.pubHomepage,
         'pubName': props.pubName,
         'pubVersion': props.pubVersion,
+        'pubPublishTo': props.pubPublishTo,
         'legacyDiscriminatorBehavior': props.legacyDiscriminatorBehavior,
         'sortModelPropertiesByRequiredFlag':
             props.sortModelPropertiesByRequiredFlag,
@@ -192,6 +209,7 @@ void main() {
           props.sortModelPropertiesByRequiredFlag);
       expect(actual.sortParamsByRequiredFlag, props.sortParamsByRequiredFlag);
       expect(actual.pubVersion, props.pubVersion);
+      expect(actual.pubPublishTo, props.pubPublishTo);
       expect(actual.pubName, props.pubName);
       expect(actual.pubHomepage, props.pubHomepage);
       expect(actual.pubDescription, props.pubDescription);
@@ -215,8 +233,9 @@ void main() {
       expect(props.sortModelPropertiesByRequiredFlag, isTrue);
       expect(props.sortParamsByRequiredFlag, isTrue);
       // Default null props
-      [
+      for (var element in [
         props.pubVersion,
+        props.pubPublishTo,
         props.pubName,
         props.pubHomepage,
         props.pubDescription,
@@ -226,7 +245,9 @@ void main() {
         props.listAnyOf,
         props.pubspecDevDependencies,
         props.pubspecDependencies
-      ].forEach((element) => expect(element, isNull));
+      ]) {
+        expect(element, isNull);
+      }
     });
     test('toMap', () {
       final props = DioAltProperties();
@@ -241,8 +262,9 @@ void main() {
       expect(map['sortParamsByRequiredFlag'], isTrue);
 
       // Doesn't include null fields
-      [
+      for (var element in [
         'pubVersion',
+        'pubPublishTo',
         'pubName',
         'pubHomepage',
         'pubDescription',
@@ -254,11 +276,14 @@ void main() {
             'listAnyOf,'
             'pubspecDevDependencies,'
             'pubspecDependencies'
-      ].forEach((element) => expect(map.containsKey(element), isFalse));
+      ]) {
+        expect(map.containsKey(element), isFalse);
+      }
     });
     test('fromMap', () {
       final props = DioAltProperties(
         pubVersion: '1.0.0',
+        pubPublishTo: 'https://test.test',
         pubName: 'test',
         pubHomepage: 'test',
         pubDescription: 'test',
@@ -279,6 +304,7 @@ void main() {
         'pubHomepage': props.pubHomepage,
         'pubName': props.pubName,
         'pubVersion': props.pubVersion,
+        'pubPublishTo': props.pubPublishTo,
         'legacyDiscriminatorBehavior': props.legacyDiscriminatorBehavior,
         'sortModelPropertiesByRequiredFlag':
             props.sortModelPropertiesByRequiredFlag,
@@ -302,6 +328,7 @@ void main() {
           props.sortModelPropertiesByRequiredFlag);
       expect(actual.sortParamsByRequiredFlag, props.sortParamsByRequiredFlag);
       expect(actual.pubVersion, props.pubVersion);
+      expect(actual.pubPublishTo, props.pubPublishTo);
       expect(actual.pubName, props.pubName);
       expect(actual.pubHomepage, props.pubHomepage);
       expect(actual.pubDescription, props.pubDescription);

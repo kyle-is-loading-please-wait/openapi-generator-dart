@@ -118,7 +118,49 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
       });
     }
 
+    // Ensure the output directory exists before invoking the JAR so the Java
+    // process can write its output (fixes #164: No such file or directory when
+    // outputDirectory does not yet exist).
+    if (arguments.outputDirectory != null) {
+      final outDir = Directory(arguments.outputDirectory!);
+      // Clean the entire output directory when requested (#19)
+      if (arguments.cleanOutputDirectory) {
+        final projectDirectory = Directory.current.resolveSymbolicLinksSync();
+        final outputDirectory = outDir.existsSync()
+            ? outDir.resolveSymbolicLinksSync()
+            : path.normalize(path.absolute(outDir.path));
+        final isRootDirectory =
+            path.equals(outputDirectory, path.rootPrefix(outputDirectory));
+        final isProjectDirectory =
+            path.equals(outputDirectory, projectDirectory);
+        final isProjectParentDirectory =
+            path.isWithin(outputDirectory, projectDirectory);
+        if (isRootDirectory || isProjectDirectory || isProjectParentDirectory) {
+          return Future.error(
+            OutputMessage(
+              message: [
+                'Refusing to clean outputDirectory because it would delete the current project, a parent directory, or a filesystem root.',
+                'Set outputDirectory to a dedicated generated output directory before using cleanOutputDirectory.',
+              ].join('\n'),
+              level: Level.SEVERE,
+              additionalContext:
+                  'outputDirectory: $outputDirectory\nprojectDirectory: $projectDirectory',
+              stackTrace: StackTrace.current,
+            ),
+          );
+        }
+        if (outDir.existsSync()) {
+          outDir.deleteSync(recursive: true);
+        }
+      }
+      if (!outDir.existsSync()) {
+        outDir.createSync(recursive: true);
+      }
+    }
+
     // Name of the package and path to the CLI script (typically just the package name if it's set up correctly)
+    // runInShell: true on all platforms so that `dart` is resolved via PATH on
+    // Linux/macOS even when the environment is not inherited (fixes #164).
     ProcessResult result;
     result = await _processRunner.run(
       'dart',
@@ -128,7 +170,7 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
         ...args,
       ],
       workingDirectory: Directory.current.path,
-      runInShell: Platform.isWindows,
+      runInShell: true,
     );
     var outputDir = path.isRelative(arguments.outputDirectory!)
         ? path.normalize(
@@ -184,7 +226,7 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
         log: log,
         communication: OutputMessage(
           message:
-              'Using a remote specification, a cache will still be created but may be outdated.',
+              'Using a remote specification. build_runner cannot track remote spec changes automatically, so rerun the generator when the remote spec changes.',
           level: Level.WARNING,
         ),
       );
@@ -193,7 +235,8 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
       // Notify build_runner of dependency on inputSpec
       var builderCanReadSpec = false;
       if (args.inputSpec is! annots.RemoteSpec &&
-          !path.isAbsolute(args.inputSpec.path)) {
+          !path.isAbsolute(args.inputSpec.path) &&
+          !path.normalize(args.inputSpec.path).startsWith('..')) {
         final maybeAssetId =
             AssetId(buildStep.inputId.package, args.inputSpec.path);
         // Check if asset can be read.  If so, build_runner will mark the asset
@@ -206,27 +249,29 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
               message: [
                 ':: Looks like you havent added the spec file [${args.inputSpec.path}] to your build.yaml.',
                 ':: This is needed for this package to monitor changes to the spec file.',
-                ':: Find out more here: https://dart.dev/tools/build_system#reading-files',
+                ':: Find out more here: https://github.com/gibahjoe/openapi-generator-dart/tree/master?tab=readme-ov-file#skipifspecisunchanged-is-deprecated',
                 '\n',
               ].join('\n'),
               level: Level.WARNING,
             ),
           );
         }
+      } else if (args.inputSpec is! annots.RemoteSpec &&
+          path.normalize(args.inputSpec.path).startsWith('..')) {
+        logOutputMessage(
+          log: log,
+          communication: OutputMessage(
+            message: [
+              ':: Spec file [${args.inputSpec.path}] is outside the package root.',
+              ':: build_runner cannot track it as a dependency, so changes to the spec will not trigger automatic rebuilds.',
+              ':: Consider using an absolute path or moving the spec inside your package.',
+            ].join('\n'),
+            level: Level.WARNING,
+          ),
+        );
       }
 
-      if (!builderCanReadSpec) {
-        if (args.skipIfSpecIsUnchanged && !await hasDiff(args: args)) {
-          logOutputMessage(
-            log: log,
-            communication: OutputMessage(
-              message: 'No diff between versions, not running generator.',
-            ),
-          );
-          return '';
-        }
-      }
-
+      // Skip spec check removed - deprecated functionality
       await runOpenApiJar(arguments: args);
       await fetchDependencies(baseCommand: baseCommand, args: args);
       await generateSources(baseCommand: baseCommand, args: args);
@@ -242,45 +287,6 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
           ),
         ),
       );
-      if (!builderCanReadSpec) {
-        if (!args.skipIfSpecIsUnchanged) {
-          logOutputMessage(
-            log: log,
-            communication: OutputMessage(
-              message:
-                  'Skip spec cache because [skipIfSpecIsUnchanged] is set to false',
-            ),
-          );
-          return '';
-        } else {
-          if (!args.hasLocalCache) {
-            logOutputMessage(
-              log: log,
-              communication: OutputMessage(
-                message: 'No local cache found. Creating one.',
-                level: Level.CONFIG,
-              ),
-            );
-          } else {
-            logOutputMessage(
-              log: log,
-              communication: OutputMessage(
-                message: 'Local cache found. Overwriting existing one.',
-                level: Level.CONFIG,
-              ),
-            );
-          }
-          await cacheSpec(
-              outputLocation: args.cachePath,
-              spec: await loadSpec(specConfig: args.inputSpec));
-          logOutputMessage(
-            log: log,
-            communication: OutputMessage(
-              message: 'Successfully cached spec changes.',
-            ),
-          );
-        }
-      }
     } catch (e, st) {
       logOutputMessage(
         log: log,
@@ -426,17 +432,19 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
     results = await _processRunner.run(
       command.executable,
       command.arguments,
-      runInShell: Platform.isWindows,
+      runInShell: true,
       workingDirectory: args.outputDirectory,
     );
 
     if (results.exitCode != 0) {
-      print('===> args ${args.jarArgs}');
       return Future.error(
         OutputMessage(
           message: 'Failed to generate source code. Build Command output:',
           level: Level.SEVERE,
-          additionalContext: results.stderr,
+          additionalContext: [
+            results.stderr,
+            'Generator arguments: ${args.jarArgs.join(' ')}',
+          ].where((message) => message.toString().isNotEmpty).join('\n'),
           stackTrace: StackTrace.current,
         ),
       );
@@ -480,7 +488,7 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
     results = await _processRunner.run(
       command.executable,
       command.arguments,
-      runInShell: Platform.isWindows,
+      runInShell: true,
       workingDirectory: args.outputDirectory,
     );
 
@@ -560,7 +568,7 @@ class OpenapiGenerator extends GeneratorForAnnotation<annots.Openapi> {
       command.executable,
       command.arguments,
       workingDirectory: args.outputDirectory,
-      runInShell: Platform.isWindows,
+      runInShell: true,
     );
 
     if (result.exitCode != 0) {

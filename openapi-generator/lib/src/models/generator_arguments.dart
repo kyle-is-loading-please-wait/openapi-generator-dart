@@ -20,10 +20,6 @@ class GeneratorArguments {
   /// The default location is: .dart_tool/openapi-generator-cache.json
   final String cachePath;
 
-  /// Informs the generator to disable the cache.
-  // @Deprecated(skipSpecDepMessage)
-  final bool skipIfSpecIsUnchanged;
-
   final bool isDebug;
 
   /// Use a custom pubspec file when generating.
@@ -38,6 +34,9 @@ class GeneratorArguments {
 
   /// Defines whether the output directory should be cleaned up before generating the output.
   final List<dynamic>? cleanSubOutputDirectory;
+
+  /// When `true`, the entire [outputDirectory] is deleted before the JAR runs.
+  final bool cleanOutputDirectory;
 
   /// Informs the generator to run source gen on the output.
   ///
@@ -130,6 +129,8 @@ class GeneratorArguments {
         outputDirectory = annotations.readPropertyOrNull('outputDirectory'),
         cleanSubOutputDirectory =
             annotations.readPropertyOrNull('cleanSubOutputDirectory'),
+        cleanOutputDirectory =
+            annotations.readPropertyOrDefault('cleanOutputDirectory', false),
         cachePath =
             annotations.readPropertyOrDefault('cachePath', defaultCachedPath),
         pubspecPath = annotations.readPropertyOrDefault<String>(
@@ -137,9 +138,7 @@ class GeneratorArguments {
             '${Directory.current.path}${Platform.pathSeparator}pubspec.yaml'),
         isDebug = annotations.readPropertyOrDefault('debugLogging', false),
         inputSpec =
-            annotations.readPropertyOrDefault('inputSpec', InputSpec.json()),
-        skipIfSpecIsUnchanged =
-            annotations.readPropertyOrDefault('skipIfSpecIsUnchanged', false);
+            annotations.readPropertyOrDefault('inputSpec', InputSpec.json());
 
   /// The stringified name of the [Generator].
   String get generatorName => generator == Generator.dart
